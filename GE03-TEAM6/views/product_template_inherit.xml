@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="motorcycle_view_search" model="ir.ui.view">
+        <field name="name">product.view.search</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_search_view"></field>
+        <field name="arch" type="xml">
+                <xpath expr="//search" position="inside">
+                    <separator/>
+                <filter string="Motorcycles :)" name="motorcycles_only" domain="[('detailed_type', '=', 'motorcycle')]"/>
+                </xpath>
+            </field>
+    </record>
+
+    <record id="sale.product_template_action" model="ir.actions.act_window">
+
+        <field name="context">{'search_default_motorcycles_only': 1}</field>
+    </record> 
+</odoo>

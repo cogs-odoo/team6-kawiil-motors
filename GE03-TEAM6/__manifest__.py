@@ -1,17 +1,17 @@
 {
-    'name' : 'GE02 TEAM6',
+    'name' : 'GE03 TEAM6',
     'description': '''
                     Motorcycle Registry
                     ====================
                     This Module is used to keep track of the Motorcycle Registration and Ownership of each motorcycled of the brand.
                     ''',
-    'autor' : 'cogs-odoo',
-    'website' : 'https://github.com/cogs-odoo/team6-kawiil-motors',
+    'autor' : 'jlma-odoo',
+    'website' : 'https://github.com/jlma-odoo/custom-addons',
     'category' : 'Kawiil/custom',
     'application' : 'True',
-    'depends' : ['base','stock','website'],
-    'data' : [],
+    'depends' : ['stock','website','sale'],
+    'data' : [
+    ],
     'demo' : [
-        'demo/demo_data.xml',
     ],
 }
