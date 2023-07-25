@@ -10,8 +10,6 @@
     'category' : 'Kawiil/custom',
     'application' : 'True',
     'depends' : ['stock','website','sale'],
-    'data' : [
-    ],
-    'demo' : [
-    ],
+    'data' : [],
+    'demo' : [],
 }

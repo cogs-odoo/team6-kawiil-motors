@@ -8,10 +8,7 @@ class ProductTemplate(models.Model):
     @api.depends('year', 'make','model')
     def _compute_name(self):
          for registry in self:
-            #
             if registry.detailed_type == 'motorcycle' and not False in (registry.make, registry.model, registry.year):
-               registry.name = str(registry.year) +registry.make +registry.model
+               registry.name = str(registry.year) + registry.make + registry.model
             else: 
                registry.name = registry.name
-
-
