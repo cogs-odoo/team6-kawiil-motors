@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="motorcycle_registry.registry_list_action" model="ir.actions.act_window">
+        <field name="name">Tasks</field>
+        <field name="res_model">motorcycle.registry</field>
+        <field name="view_mode">tree,kanban,map</field>
+        <!-- <field name="domain">[('display_project_id', '!=', False)]</field> -->
+    </record>
+
+    <!-- Adding map view to project-->
+    <record id="motorcycle_registry_map_view_no_title" model="ir.ui.view">
+        <field name="name">motorcycle.registry.view.map</field>
+        <field name="model">motorcycle.registry</field>
+        <field name="arch" type="xml">
+            <map res_partner="owner_id" routing="1" js_class="project_map">
+                <field name="owner_id" string="Customer"/>
+                <field name="owner_phone" string="Phone"/>
+            </map>
+        </field>
+    </record>
+
+    <!-- Set map view -->
+    <record id="motorcycle_registry_map_action_view" model="ir.actions.act_window.view">
+        <field name="sequence" eval="60"/>
+        <field name="view_mode">map</field>
+        <field name="act_window_id" ref="motorcycle_registry.registry_list_action"/>
+        <field name="view_id" ref="motorcycle_registry_map_view_no_title"/>
+    </record>
+</odoo>
