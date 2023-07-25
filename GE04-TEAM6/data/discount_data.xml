@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <data noupdate="0">
+         <!-- Price list -->
+        <record id="new_customer_discount" model="product.pricelist">
+            <field name="name">First time customer pricelist v2</field>
+            <field name="item_ids">discount_new_customer</field>
+        </record>
+
+        <record id="discount_new_customer" model="product.pricelist.item">
+            <field name="pricelist_id" ref="new_customer_discount"/>
+            <field name="compute_price">formula</field>
+            <field name="price_surcharge">-2500.0</field>
+            <field name="min_quantity">1.0</field>
+        </record>
+
+        
+    </data>
+
+
+
+    
+
+</odoo>
