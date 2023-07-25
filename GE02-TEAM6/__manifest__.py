@@ -17,6 +17,6 @@ Addition of a map views that allows K'awiil Motors to view the locations of thei
         'views/motorcycle_map_view_inherit.xml',
     ],
     'demo' : [],
-    "application": False,
-    "license": "OPL-1",
+    'application': False,
+    'license': 'OPL-1',
 }
