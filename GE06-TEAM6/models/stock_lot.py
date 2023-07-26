@@ -11,10 +11,10 @@ class StockLot (models.Model):
             template = lot.product_id.product_tmpl_id
 
             if template.detailed_type == 'motorcycle' and lot.product_id.tracking != 'None':
-                make = template.make if template.make else 'XX'
-                model = template.model if template.make else 'XX'
-                year = template.year if template.make else '00'
-                battery = template.battery_capacity if template.make else 'XX'
+                make = template.make.upper() if template.make else 'XX'
+                model = template.model.upper() if template.model else 'XX'
+                year = template.year if template.year else '00'
+                battery = template.battery_capacity.upper() if template.battery_capacity else 'XX'
                 serial = self.env['ir.sequence'].next_by_code('motorcycle.serial.number.auto')
 
                 lot.name = make + model + str(year) + battery + serial
