@@ -10,7 +10,10 @@ K'awiil Motors wants to integrate their Motorcycle registry with the inventory a
     "category": "Kauil/Registry",
     "license": "OPL-1",
     "depends": ["motorcycle_registry"],
-    "data": [],
+    "data": [
+        "views/ge07_stock_view_production_lot_tree_inherit.xml",
+        "views/ge07_motorcycle_registry_view_list_inherit.xml"
+    ],
     "demo": [],
     "author": "kauil-motors",
     "website": "www.odoo.com",
