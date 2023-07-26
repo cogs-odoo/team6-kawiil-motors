@@ -20,4 +20,3 @@ class StockLot (models.Model):
                 lot.name = make + model + str(year) + battery + serial
             else:
                 lot.name = self.env['ir.sequence'].next_by_code('stock.lot.serial')
-            
