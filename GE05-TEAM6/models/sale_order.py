@@ -13,8 +13,7 @@ class SaleOrder(models.Model):
               'New Jersey', 'Pennsylvania', 'New York', 'Connecticut', 'Maine', 'Massachusetss', 'Vermont', 
               'New Hampshire', 'Rhode Island']
 
-        for order in self:
-            if order.state in ['draft', 'sent'] or not order.ids:
+        for order in self.filtered(lambda o: o.state in ['draft', 'sent'] or not o.ids):
                 if order.partner_shipping_id.state_id.name in sf:
                     order.warehouse_id = 4
                 elif order.partner_shipping_id.state_id.name in bf:
