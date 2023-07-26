@@ -9,11 +9,10 @@ class ResPartner(models.Model):
 
     def _compute_is_new_customer(self):
         for registry in self:
-            ordenes = registry.sale_order_ids.mapped('order_line')
-            ids_productos = ordenes.mapped('product_id')
+            orders = registry.sale_order_ids.mapped('order_line')
+            ids_productos = orders.mapped('product_id')
             if (False not in ids_productos.mapped('detailed_type') and 'motorcycle' in ids_productos.mapped('detailed_type')):
                 registry.is_new_customer = False
             else:
                 registry.is_new_customer = True
-    
-       
+   
