@@ -10,8 +10,10 @@
     'category' : 'Kawiil/custom',
     'application' : 'True',
     'depends' : ['stock','website','sale'],
+    "license": "OPL-1",
     'data' : [
-        'data/discount_data.xml'
+        'data/discount_data.xml',
+        'views/sale_view_inherit.xml',
     ],
     'demo' : [
     ],
