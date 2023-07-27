@@ -1,14 +1,10 @@
-from odoo import fields, models, api, Command
+from odoo import models, Command
 
 class StockPicking(models.Model):
     _inherit = "stock.picking"
 
     def _action_done(self):
         res = super()._action_done()
-
-        # When? When destination is partner/customers address: if location_dest_id == self.env.ref("stock.stock_location_customers") ?
-        # When? When sale is validated: Sale > S0000 > Transfers
-        # Keep in mind: Cancel validation shouldn't create a registry
 
         if res:
             for line in self.move_line_ids:
