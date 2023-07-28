@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ge09_repair_order_view_inherit" model="ir.ui.view">
+            <field name="name">ge09.repair.order.view.inherit</field>
+            <field name="model">repair.order</field>
+            <field name="inherit_id" ref="repair.view_repair_order_form"/>
+            <field name="arch" type="xml">
+            <field name="partner_id" invisible = '1'/>
+
+                <xpath expr="//field[@name='tag_ids']" position="after">
+                    <field string="VIN" name="vin"/>
+                    <field name="registry_id"></field>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
