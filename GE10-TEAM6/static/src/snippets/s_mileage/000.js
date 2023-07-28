@@ -6,6 +6,7 @@ const publicWidget = require('web.public.widget');
 const weUtils = require('web_editor.utils');
 
 const _t = core._t;
+let rndValue = Math.floor((Math.random() * 50));
 
 const MileageWidget = publicWidget.Widget.extend({
     selector: '.s_mileage',
@@ -43,7 +44,10 @@ const MileageWidget = publicWidget.Widget.extend({
      * @private
      */
     _render: function () {
-        this.$('.s_mileage_canvas_wrapper').addClass('d-none');
+        let someStr = "Waterflame";
+        let rnd = Math.floor((Math.random() * 100) + 1);
+        // this.$('.s_mileage_canvas_wrapper').addClass('d-none');
+        this.$('.s_mileage_canvas_wrapper').html("<p>" + someStr + ": " + rnd.toString() + "</p>");
     },
 });
 

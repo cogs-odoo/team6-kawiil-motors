@@ -4,7 +4,8 @@
 <template id="s_mileage" name="Countdown">
     <section class="s_mileage pt48 pb48">
         <div class="container">
-            <div class="s_mileage_canvas_wrapper text-center"/>
+            <div class="s_mileage_canvas_wrapper text-center">
+            </div>
         </div>
     </section>
 </template>
@@ -12,7 +13,7 @@
 <template id="s_mileage_options" inherit_id="website.snippet_options">
     <xpath expr="." position="inside">
         <div data-js="mileage" data-selector=".s_mileage">
-            <!-- <we-colorpicker string="Text Color" data-attribute-name="textColor" data-select-data-attribute=""/> -->
+            <we-colorpicker string="Text Color" data-attribute-name="textColor" data-select-data-attribute=""/>
         </div>
     </xpath>
 </template>
