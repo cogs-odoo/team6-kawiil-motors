@@ -9,7 +9,7 @@ K'awiil Motors wants to be able to showcase both its motorcycle's reliability an
     "version": "1.0",
     "category": "Kauil/Registry",
     "license": "OPL-1",
-    "depends": [],
+    "depends": ["motorcycle_registry"],
     "data": [
         "views/snippets/snippets.xml",
         "views/snippets/s_mileage.xml",
@@ -18,4 +18,9 @@ K'awiil Motors wants to be able to showcase both its motorcycle's reliability an
     "author": "kauil-motors",
     "website": "www.odoo.com",
     "application": False,
+    "assets": {
+        'website.assets_wysiwyg': [
+            'GE10-TEAM6/static/src/snippets/s_mileage/options.js',
+        ],
+    }
 }
