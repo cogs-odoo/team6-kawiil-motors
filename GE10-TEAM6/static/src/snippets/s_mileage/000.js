@@ -4,6 +4,7 @@ odoo.define('GE10-TEAM6.s_mileage', function (require) {
 const core = require('web.core');
 const publicWidget = require('web.public.widget');
 const weUtils = require('web_editor.utils');
+const ajax = require('web.ajax');
 
 const _t = core._t;
 let rndValue = Math.floor((Math.random() * 50));
@@ -44,10 +45,17 @@ const MileageWidget = publicWidget.Widget.extend({
      * @private
      */
     _render: function () {
-        let someStr = "Waterflame";
-        let rnd = Math.floor((Math.random() * 100) + 1);
-        // this.$('.s_mileage_canvas_wrapper').addClass('d-none');
-        this.$('.s_mileage_canvas_wrapper').html("<p>" + someStr + ": " + rnd.toString() + "</p>");
+        var mileage;
+        var self = this;
+
+        ajax.jsonRpc('/mileage', 'call').then(function (data) {
+            mileage = data;
+            console.log(mileage);
+            console.log(jQuery.type(mileage));
+            self.$('.s_mileage_canvas_wrapper').html("<h3>Current mileage: " + data + "</h3>");
+        });
+        
+        // this.$('.s_mileage_canvas_wrapper').html("<p>" + someStr + ": " + mileage + "</p>");
     },
 });
 

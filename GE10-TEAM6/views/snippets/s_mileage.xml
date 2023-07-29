@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-<template id="s_mileage" name="Countdown">
+<template id="s_mileage" name="Mileage Count">
     <section class="s_mileage pt48 pb48">
         <div class="container">
             <div class="s_mileage_canvas_wrapper text-center">
