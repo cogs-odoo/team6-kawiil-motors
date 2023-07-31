@@ -1,5 +1,4 @@
 from odoo import http
-import datetime
 
 class Academy(http.Controller):
     @http.route('/mileage', type='json', auth = 'public')
@@ -12,3 +11,4 @@ class Academy(http.Controller):
             mileage_count = mileage_count + registry.current_mileage
 
         return mileage_count
+    
