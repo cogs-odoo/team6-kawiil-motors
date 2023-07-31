@@ -1,1 +1,3 @@
-from . import motorcycle_registry, stock_lot, stock_picking
+from . import motorcycle_registry
+from . import stock_lot
+from . import stock_picking
