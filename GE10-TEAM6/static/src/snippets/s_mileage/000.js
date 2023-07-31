@@ -2,12 +2,7 @@ odoo.define('GE10-TEAM6.s_mileage', function (require) {
 'use strict';
 
 const ajax = require('web.ajax');
-const core = require('web.core');
 const publicWidget = require('web.public.widget');
-const weUtils = require('web_editor.utils');
-
-const _t = core._t;
-let rndValue = Math.floor((Math.random() * 50));
 
 const MileageWidget = publicWidget.Widget.extend({
     selector: '.s_mileage',
