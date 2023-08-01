@@ -45,7 +45,6 @@ const MileageWidget = publicWidget.Widget.extend({
         var self = this;
 
         ajax.jsonRpc('/mileage', 'call').then(function (data) {
-            //self.$('.mileage_canvas_fallback').html("<h3>Current mileage: " + data + "</h3>");
             var mileage = data;
             var unit = "mi";
 
