@@ -10,7 +10,7 @@ class CustomerPortal(portal.CustomerPortal):
 
     @http.route(['/my/repairs/new'], type='http', auth='user', methods=['GET'], website=True)
     def portal_new_repair_page (self, **kwargs):
-        return request.render("GE11-TEAM6.repair_order_portal_new")
+        return request.render('GE11-TEAM6.repair_order_portal_new')
 
     @http.route(['/my/repairs/create_new'], type='http', auth='user', methods=['POST'], website=True)
     def portal_new_repair (self, access_token=None, **kwargs):
@@ -25,14 +25,14 @@ class CustomerPortal(portal.CustomerPortal):
 
         return self.portal_my_orders ()
     
-    @http.route(['/my/repairs', '/my/repairs/page/<int:page>'], type='http', auth="user", website=True)
+    @http.route(['/my/repairs', '/my/repairs/page/<int:page>'], type='http', auth='user', website=True)
     def portal_my_orders(self, **kwargs):
         values = self._prepare_repair_portal_rendering_values(repair_page=False, **kwargs)
         request.session['my_repairs_history'] = values['repairs'].ids[:100]
-        return request.render("GE11-TEAM6.portal_my_repairs", values)
+        return request.render('GE11-TEAM6.portal_my_repairs', values)
     
-    @http.route(['/my/repairs/<int:repair_id>'], type='http', auth="public", website=True)
-    def portal_order_page(self, repair_id, report_type=None, access_token=None, sortby=None, search_in="all", search=None, message=False, download=False, **kw):
+    @http.route(['/my/repairs/<int:repair_id>'], type='http', auth='public', website=True)
+    def portal_order_page(self, repair_id, report_type=None, access_token=None, sortby=None, search_in='all', search=None, message=False, download=False, **kw):
         try:
             repair_sudo = self._document_check_access('repair.order', repair_id, access_token=access_token)
         except (AccessError, MissingError):
@@ -54,7 +54,7 @@ class CustomerPortal(portal.CustomerPortal):
                       f'&id={repair_sudo.id}'\
                       f'&view_type=form'
 
-        print ("URL: ", backend_url)    
+        print ('URL: ', backend_url)    
     
         values = {
             'repair_order': repair_sudo,
@@ -98,7 +98,7 @@ class CustomerPortal(portal.CustomerPortal):
             search_domain = OR([search_domain, [('vin', 'ilike', search)]])
         return search_domain
 
-    def _prepare_repair_portal_rendering_values (self, page = 1, date_begin = None, sortby = None, search_in="all", search=None, repair_page = False, **kwargs):
+    def _prepare_repair_portal_rendering_values (self, page = 1, date_begin = None, sortby = None, search_in='all', search=None, repair_page = False, **kwargs):
         
         RepairOrder = request.env['repair.order']
         
@@ -112,7 +112,7 @@ class CustomerPortal(portal.CustomerPortal):
 
         searchbar_inputs = self._get_repair_searchbar_inputs()
 
-        url = "/my/repairs"
+        url = '/my/repairs'
 
         if search and search_in:
             domain += self._get_search_domain(search_in, search)
