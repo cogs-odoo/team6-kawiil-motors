@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ge07_motorcycle_registry_view_list_inherit" model="ir.ui.view">
+            <field name="name">ge07.motorcycle.registry.view.list.inherit</field>
+            <field name="model">motorcycle.registry</field>
+            <field name="inherit_id" ref="motorcycle_registry.motorcycle_registry_view_list"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='registry_number']" position="after">
+                    <field name="lot_id" />
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
