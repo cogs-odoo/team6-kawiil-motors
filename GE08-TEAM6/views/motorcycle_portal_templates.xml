@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="portal_my_home_menu_motorcycle" name="Portal layout: motorcycle menu entries" inherit_id="portal.portal_breadcrumbs" priority="20">
+        <xpath expr="//ol[hasclass('o_portal_submenu')]" position="inside">
+            <li t-if="page_name == 'registry' or motorcycle_registry" t-attf-class="breadcrumb-item #{'active '}">
+                <a t-if="motorcycle_registry" t-attf-href="/my/registries?{{ keep_query() }}">Motorcycle Registry</a>
+                <t t-else="">Motorcycle Registry</t>
+            </li>
+            <li t-if="motorcycle_registry" class="breadcrumb-item active">
+                <span t-field="motorcycle_registry.registry_number"/>
+            </li>
+        </xpath>
+    </template>
+
+    <template id="portal_my_home_motorcycle" name="Show Motorcycle Registry" customize_show="True" inherit_id="portal.portal_my_home" priority="25">
+    <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+        <t t-call="portal.portal_docs_entry">
+            <t t-set="title">Motorcycle Registry</t>
+            <t t-set="url" t-value="'/my/registries'"/>
+            <t t-set="placeholder_count" t-value="'registry_count'"/>
+        </t>
+    </xpath>
+  </template>
+
+    <template id="portal_my_motorcycle_registries" name="My Motorcycle Registries">
+      <t t-call="portal.portal_layout">
+          <t t-set="breadcrumbs_searchbar" t-value="True"/>
+
+          <t t-call="portal.portal_searchbar">
+              <t t-set="title">Motorcycle Registries</t>
+          </t>
+          
+          <t t-if="not registries">
+              <p>There are currently no motorcycle registries for your account.</p>
+          </t>
+          <t t-if="registries" t-call="portal.portal_table">
+              <thead>
+                  <tr class="active">
+                      <th>
+                          <span class='d-none d-md-inline'>Motorcycle Registry #</span>
+                          <span class='d-block d-md-none'>Ref.</span>
+                      </th>
+                      <th class="text-end">
+                          <span class='d-none d-md-inline'>Registration Date</span>
+                          <span class='d-block d-md-none'>Registration</span>
+                      </th>
+                      <th class="text-center"/>
+                      <th class="text-end">VIN</th>
+                  </tr>
+              </thead>
+              <t t-foreach="registries" t-as="registry">
+                  <tr>
+                      <td><a t-att-href="registry.get_portal_url()"><t t-esc="registry.registry_number"/></a></td>
+                      <td class="text-end">
+                          <span t-field="registry.registry_date" t-options="{'widget': 'date'}"/>&amp;nbsp;
+                      </td>
+                      <td class="text-center">
+                          <span t-field="registry.owner_id" class="badge rounded-pill text-bg-info d-none d-md-inline"/>
+                      </td>
+                      <td class="text-end"><span t-field="registry.vin"/></td>
+                  </tr>
+              </t>
+          </t>
+      </t>
+    </template>
+
+    <template id="portal_registry_page" name="Motorcycle Registry Portal Template" inherit_id="portal.portal_sidebar" primary="True">
+        <xpath expr="//div[hasclass('o_portal_sidebar')]" position="inside">
+            <div class="container">
+                <div class="row">
+                    <div class="col-4 mt16 o_portal_sale_sidebar">
+                        <t t-call="portal.portal_record_sidebar">
+                            <t t-set="classes" t-value="'col-lg-auto d-print-none'"/>
+
+                            <t t-set="title">
+                                <h3 class="mb-0"><b t-field="motorcycle_registry.vin" data-id="registry_vin"/> </h3>
+                            </t>
+
+                            <t t-set="entries">
+                                <ul class="list-group list-group-flush flex-wrap flex-row flex-lg-column">
+                                    <li class="list-group-item flex-grow-1">
+                                        <strong>Registration Date</strong>
+                                        <span class="text-black-50" t-field="motorcycle_registry.registry_date"/>
+                                    </li>
+                                    <li class="list-group-item flex-grow-1">
+                                        <strong>Owner</strong>
+                                        <span class="text-black-50" t-field="motorcycle_registry.owner_id"/>
+                                    </li>
+                                    <li class="list-group-item flex-grow-1">
+                                        <strong>Email</strong>
+                                        <span class="text-black-50" t-field="motorcycle_registry.owner_email"/>
+                                    </li>
+                                    <li class="list-group-item d-grid align-content-center container">
+                                        <div class="row">
+                                            <a role="button" class="btn btn-info" data-bs-toggle="modal" 
+                                            data-bs-target="#modaledit" href="#" t-if="owner_id == motorcycle_registry.owner_id"
+                                            style="width: 30%; margin: auto; font-size: 0.9rem;">
+                                                <t> Edit </t>
+                                            </a>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </t>
+                        </t>
+                    </div>
+
+                    <div t-attf-class="card #{'pb-7'} col" id="portal_registry_content" style="margin-top: 1rem">
+                        <div t-call="GE08-TEAM6.motorcycle_registry_portal_content"/>
+                    </div>
+                </div>
+            </div>
+        </xpath>
+    </template>
+
+    <template id="motorcycle_registry_portal_content" name="Motorcycle Registry Portal Content">
+
+        <div role="dialog" class="modal fade" id="modaledit">   
+            <div class="modal-dialog">
+                <form t-attf-action="/my/registries/#{motorcycle_registry.id}/edit?access_token=#{motorcycle_registry.access_token}" id="edit" method="POST" class="modal-content">
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                    <header class="modal-header">
+                        <h4 class="modal-title">
+                            <span> Edit registry: </span>
+                            <b t-field="motorcycle_registry.registry_number"/>
+                        </h4>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </header>
+                    <main class="modal-body" id="edit-dialog">
+                        <div class="row g-3 needs-validation">
+                            <div class="col-md-4">
+                                <label class="form-label">Current Mileage</label>
+                                <input name="current_mileage" type="number" class="form-control" id=""/>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="validationCustom02" class="form-label">License Plate Number</label>
+                                <input name="license_plate" type="text" class="form-control" id="validationCustom02"/>
+                                <div class="valid-feedback">
+                                Looks good!
+                                </div>
+                            </div>
+                            <div class="form-check col-md-4 align-items-center">
+                                <input name="public" class="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
+                                <label class="form-check-label" for="flexCheckDefault" t-if="motorcycle_registry.public">
+                                    Remove public
+                                </label>
+                                <label class="form-check-label" for="flexCheckDefault" t-else="">
+                                    Make public
+                                </label>
+                            </div>
+                        </div>
+                    </main>
+                    <footer class="modal-footer">
+                        <button type="submit" t-att-id="motorcycle_registry.id" class="btn btn-danger">
+                            Done
+                        </button>
+                    </footer>
+                </form>
+            </div>
+        </div>
+
+        <div id="introduction" t-attf-class="pb-2 pt-3 #{'card-header bg-white'}">
+            <h2 class="my-0">
+                <span> Registry </span> 
+                <t t-out="motorcycle_registry.registry_number"/>
+            </h2>
+        </div>
+
+        <div t-attf-class="#{'card-body' if report_type == 'html' else ''}">
+            <div class="container">
+                <div class="row">
+                    <div class="col-4">
+                        <div t-field="motorcycle_registry.picture"
+                            t-options="{'widget': 'image', 'qweb_img_responsive': True}"/>
+                    </div>
+                    <div class="col-8">
+                        <ul class="list-group list-group-flush flex-wrap flex-row flex-lg-column">
+                            <li class="list-group-item">
+                                <strong>Make</strong>
+                                <span class="text-black-50" t-field="motorcycle_registry.make" style="float: right"/>
+                            </li>
+                            <li class="list-group-item flex-grow-1">
+                                <strong>Model</strong>
+                                <span class="text-black-50" t-field="motorcycle_registry.model" style="float: right"/>
+                            </li>
+                            <li class="list-group-item flex-grow-1">
+                                <strong>Current Mileage</strong>
+                                <span class="text-black-50" t-field="motorcycle_registry.current_mileage" style="float: right"/>
+                            </li>
+                            <li class="list-group-item flex-grow-1">
+                                <strong>License Plate</strong>
+                                <span class="text-black-50" t-field="motorcycle_registry.license_plate" style="float: right"/>
+                            </li>
+                            <li class="list-group-item flex-grow-1">
+                                <strong t-if="motorcycle_registry.public" class="text-info">Public</strong>
+                                <strong t-else="motorcycle_registry.public == False" class="text-info">Not Public </strong>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+</odoo>
