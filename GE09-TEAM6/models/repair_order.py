@@ -9,7 +9,7 @@ class RepairOrder(models.Model):
     sale_order_id = fields.Many2one(related='registry_id.sale_order_id')
     product_id = fields.Many2one(related='registry_id.lot_id.product_id')
 
-    lot_id = fields.Many2one(related="registry_id.lot_id")
+    lot_id = fields.Many2one(related='registry_id.lot_id')
 
     @api.depends('vin')
     def _compute_registry_id_from_vin(self):
