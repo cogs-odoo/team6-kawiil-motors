@@ -1,23 +1,23 @@
 from odoo import fields, models, api
 from odoo.exceptions import UserError
 
+
 class MotorcycleRegistry(models.Model):
     _inherit = 'motorcycle.registry'
     
-    
     @api.model_create_multi
     def create(self, vals_list):
-        
         res = super().create(vals_list)
-        data =  res.env['res.users'].search([]).mapped('login')
+        data =  self.env['res.users'].search([]).mapped('login')
         if res.owner_id.email not in data:
             user = res.env['res.users'].create({
                     'name': res.owner_id.name,
                     'login' : res.owner_id.email,
                     'email' : res.owner_id.email,
+                    'partner_id' : res.owner_id.id,
                 })        
             self.action_grant_access(user)
-            return res
+        return res
     
     def action_grant_access(self,user):
         user.ensure_one()

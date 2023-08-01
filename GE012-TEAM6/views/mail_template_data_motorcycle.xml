@@ -5,7 +5,7 @@
         <record id="mail_template_data_motorcycle" model="mail.template">
             <field name="name">Portal: User Invite</field>
             <field name="model_id" ref="base.model_res_users"/>
-            <field name="subject">Your account at {{ objec.company_id.name }}</field>
+            <field name="subject">Your account at {{ object.company_id.name }}</field>
             <field name="email_to">{{ object.email_formatted }}</field>
             <field name="description">Invitation email to contacts to create a user account</field>
             <field name="body_html" type="html">
