@@ -112,8 +112,6 @@ class CustomerPortal(portal.CustomerPortal):
 
         searchbar_inputs = self._get_repair_searchbar_inputs()
 
-        #searchbar_sortings = self._get_repair_searchbar_sortings ()
-        #sort_order = searchbar_sortings[sortby]['order']
         url = "/my/repairs"
 
         if search and search_in:
@@ -143,13 +141,6 @@ class CustomerPortal(portal.CustomerPortal):
         })
 
         return values
-
-    # def _get_repair_searchbar_sortings(self):
-    #     return {
-    #         'date': {'label': ('Order Date'), 'order': 'create_date desc'},
-    #         'name': {'label': ('Ticket'), 'order': 'name'},
-    #         'vin': {'label': ('VIN'), 'order': 'state'},
-    #     }
     
     def _prepare_repairs_domain(self, partner):
         return [
