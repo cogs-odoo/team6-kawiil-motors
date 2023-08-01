@@ -20,7 +20,7 @@ class CustomerPortal(portal.CustomerPortal):
 
         RepairOrder = request.env['repair.order'].create({
             'vin': vin,
-            'product_uom': qty
+            'product_uom': qty,
         })
 
         return self.portal_my_orders ()
