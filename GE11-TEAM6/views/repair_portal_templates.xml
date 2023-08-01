@@ -47,6 +47,7 @@
                         </th>
                         <th class="text-end">Creation Date</th>
                         <th class="text-center">Status</th>
+                        <th class="text-end">VIN</th>
                     </tr>
                 </thead>
                 <t t-foreach="repairs" t-as="repair">
@@ -64,7 +65,7 @@
                                 <span t-field="repair.state"/>&amp;nbsp;
                             </span>
                         </td>
-                        <!-- <td class="text-end"><span t-field="repair.amount_total"/></td> -->
+                        <td class="text-end"><span t-field="repair.vin"/></td>
                     </tr>
                 </t>
             </t>
