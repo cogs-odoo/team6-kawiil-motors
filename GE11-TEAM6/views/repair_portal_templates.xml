@@ -1,0 +1,362 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="portal_my_home_menu_repairs" name="Portal layout : repair menu entries" inherit_id="portal.portal_breadcrumbs" priority="20">
+        <xpath expr="//ol[hasclass('o_portal_submenu')]" position="inside">
+            <li t-if="page_name == 'repair' or repair_order" t-attf-class="breadcrumb-item #{'active ' if not repair_order else ''}">
+                <a t-if="repair_order" t-attf-href="/my/repairs?{{ keep_query() }}">Repairs</a>
+                <t t-else="">Repairs</t>
+            </li>
+            <li t-if="repair_order" class="breadcrumb-item active">
+                <t t-out="repair_order.name"/>
+            </li>
+        </xpath>
+    </template>
+
+      <!-- <li t-if="page_name == 'rfq' or order and order.state == 'sent'" t-attf-class="breadcrumb-item #{'active ' if not order else ''}">
+        <a t-if="order" t-attf-href="/my/rfq?{{ keep_query() }}">Requests for Quotation</a>
+        <t t-else="">Requests for Quotation</t>
+      </li>
+      <li t-if="page_name == 'purchase' or order and order.state != 'sent'" t-attf-class="breadcrumb-item #{'active ' if not order else ''}">
+        <a t-if="order" t-attf-href="/my/purchase?{{ keep_query() }}">Purchase Orders</a>
+        <t t-else="">Purchase Orders</t>
+      </li>
+      <li t-if="order" class="breadcrumb-item active">
+        <t t-esc="order.name"/>
+      </li> -->
+      
+
+    <template id="portal_my_home_repairs" name="Show Repair Orders" customize_show="True" inherit_id="portal.portal_my_home" priority="20">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+            <t t-call="portal.portal_docs_entry">
+                <t t-set="title">Repair Orders</t>
+                <t t-set="url" t-value="'/my/repairs'"/>
+                <t t-set="placeholder_count" t-value="'repair_count'"/>
+            </t>
+        </xpath>
+    </template>
+
+    <template id="portal_my_repairs" name="My Repair Orders">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True"/>
+
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">Repair Orders</t>
+            </t>
+            <t t-if="repairs" t-call="portal.portal_table">
+                <thead>
+                    <tr class="active">
+                        <th>
+                            <span class='d-none d-md-inline'>Repair Order #</span>
+                            <span class='d-block d-md-none'>Ref.</span>
+                        </th>
+                        <th class="text-end">Creation Date</th>
+                        <th class="text-center">Status</th>
+                    </tr>
+                </thead>
+                <t t-foreach="repairs" t-as="repair">
+                    <tr>
+                        <td><a t-att-href="repair.get_portal_url()"><t t-out="repair.name"/></a></td>
+                        <td class="text-end">
+                            <span t-field="repair.create_date" t-options="{'widget': 'date'}"/>&amp;nbsp;
+                            <span class='d-none d-md-inline' t-field="repair.create_date" t-options="{'time_only': True}"/>
+                        </td>
+                        <td class="text-center">
+                            <span t-if="repair.state == 'done'"  class="badge rounded-pill text-bg-success">
+                                <i class="fa fa-fw fa-check" role="img" aria-label="Done" title="Done"/>Done
+                            </span>
+                            <span t-else="">
+                                <span t-field="repair.state"/>&amp;nbsp;
+                            </span>
+                        </td>
+                        <!-- <td class="text-end"><span t-field="repair.amount_total"/></td> -->
+                    </tr>
+                </t>
+            </t>
+            <p t-else="">There are currently no repairs for your account.</p>
+        </t>
+    </template>
+
+    <template id="repair_order_portal_template" name="Repair Order Portal Template" inherit_id="portal.portal_sidebar" primary="True">
+        <xpath expr="//div[hasclass('o_portal_sidebar')]" position="inside">
+            <!-- <t t-set="o_portal_fullwidth_alert" groups="sales_team.group_sale_salesman">
+                 Uses backend_url provided in rendering values
+                <t t-call="portal.portal_back_in_edit_mode"/>
+            </t> -->
+
+            <div class="row mt16 o_portal_sale_sidebar">
+                <!-- Sidebar -->
+                <t t-call="portal.portal_record_sidebar">
+                    <t t-set="classes" t-value="'col-lg-auto d-print-none'"/>
+
+                    <t t-set="title">
+                        <h2 class="mb-0"><b t-field="repair_order.state" data-id="state"/> </h2>
+                    </t>
+                    <t t-set="entries">
+                        <ul class="list-group list-group-flush flex-wrap flex-row flex-lg-column">
+                            <li class="list-group-item d-grid align-content-start">
+                                <div class="o_download_pdf btn-toolbar flex-sm-nowrap">
+                                    <div class="btn-group flex-grow-1 me-1 mb-1">
+                                        <a class="btn btn-secondary o_download_btn" t-att-href="repair_order.get_portal_url(report_type='pdf', download=True)" title="Download"><i class="fa fa-download"/> Download</a>
+                                    </div>
+                                    <div class="btn-group flex-grow-1 mb-1">
+                                        <a class="btn btn-secondary o_print_btn o_portal_invoice_print" t-att-href="repair_order.get_portal_url(report_type='pdf')" id="print_invoice_report" title="Print" target="_blank"><i class="fa fa-print"/> Print</a>
+                                    </div>
+                                </div>
+                            </li>
+
+                            <li class="navspy list-group-item ps-0 flex-grow-1" t-ignore="true" role="complementary">
+                                <ul class="nav flex-column bs-sidenav"></ul>
+                            </li>
+
+                            <!-- <t t-if="not sale_order.is_expired and sale_order.state in ['draft', 'sent']">
+                                <li t-if="sale_order.validity_date" class="list-group-item">
+                                    <small><b class="text-muted">This offer expires on</b></small>
+                                    <div t-field="sale_order.validity_date"></div>
+                                </li>
+                                <li t-if="sale_order.amount_undiscounted - sale_order.amount_untaxed &gt; 0.01" class="list-group-item flex-grow-1">
+                                    <small><b class="text-muted">Your advantage</b></small>
+                                    <small>
+                                        <b t-field="sale_order.amount_undiscounted"
+                                            t-options='{"widget": "monetary", "display_currency": sale_order.pricelist_id.currency_id}'
+                                            style="text-decoration: line-through"
+                                            class="d-block mt-1"
+                                            data-id="amount_undiscounted" />
+                                    </small>
+                                    <t t-if="sale_order.amount_untaxed == sale_order.amount_total">
+                                        <h4 t-field="sale_order.amount_total" class="text-success" data-id="total_amount"/>
+                                    </t>
+                                    <t t-else="">
+                                        <h4 t-field="sale_order.amount_untaxed" class="text-success mb-0" data-id="total_untaxed"/>
+                                        <small>(<span t-field="sale_order.amount_total" data-id="total_amount"/> Incl. tax)</small>
+                                    </t>
+                                </li>
+                            </t> -->
+
+                            <li t-if="repair_order.user_id" class="list-group-item flex-grow-1">
+                                <div class="small mb-1">
+                                    <strong class="text-muted">Repair person</strong>
+                                </div>
+                                <div class="row flex-nowrap">
+                                    <div class="col flex-grow-0 pe-2">
+                                        <img class="rounded-circle mr4 float-start o_portal_contact_img"
+                                            t-att-src="image_data_uri(repair_order.user_id.avatar_1024)"
+                                            alt="Contact"/>
+                                    </div>
+                                    <div class="col ps-0" style="min-width: 150px">
+                                        <span t-field="repair_order.user_id"
+                                            t-options='{"widget": "contact", "fields": ["name", "phone"], "no_marker": True}'/>
+                                        <a href="#discussion" class="small">
+                                            <i class="fa fa-comment"></i> Send message
+                                        </a>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </t>
+                </t>
+
+                <!-- Page content -->
+                <div id="quote_content" class="col-12 col-lg justify-content-end">
+
+                    <!-- modal relative to the action reject -->
+                    <div role="dialog" class="modal fade" id="modaldecline">
+                        <div class="modal-dialog">
+                            <form id="decline" method="POST" t-attf-action="/my/repairs/#{repair_order.id}/decline?access_token=#{repair_order.access_token}" class="modal-content">
+                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                <header class="modal-header">
+                                    <h4 class="modal-title">Reject This Repair</h4>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </header>
+                                <main class="modal-body">
+                                    <p>
+                                        Tell us why you are refusing this repair, this will help us improve our services.
+                                    </p>
+                                    <textarea rows="4" name="decline_message" required="" placeholder="Your feedback..." class="form-control" />
+                                </main>
+                                <footer class="modal-footer">
+                                    <button type="submit" t-att-id="repair_order.id" class="btn btn-danger">
+                                        <i class="fa fa-times"></i> Reject
+                                    </button>
+                                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
+                                        Cancel
+                                    </button>
+                                </footer>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- status messages -->
+                    <div t-if="message == 'sign_ok'" class="alert alert-success alert-dismissible d-print-none" role="status">
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        <strong>Thank You!</strong><br/>
+                        <t t-if="message == 'sign_ok' and repair_order.state in ['confirmed', 'done']">
+                            Your repair has been confirmed.
+                        </t>
+                        <!-- <t t-elif="message == 'sign_ok' and repair._has_to_be_paid()">
+                            Your order has been signed but still needs to be paid to be confirmed.
+                        </t> -->
+                        <t t-else="">Your repair has been signed.</t>
+                    </div>
+
+                    <div t-if="message == 'cant_reject'" class="alert alert-danger alert-dismissible d-print-none" role="alert">
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        Your repair is not in a state to be rejected.
+                    </div>
+
+                    <div t-if="repair_order.state == 'cancel'" class="alert alert-danger alert-dismissible d-print-none" role="alert">
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="close"></button>
+                        <strong>This repair has been canceled.</strong> <a role="button" href="#discussion"><i class="fa fa-comment"/> Contact us to get a new repair.</a>
+                    </div>
+
+                    <!-- main content -->
+                    <div t-attf-class="card #{'pb-5' if report_type == 'html' else ''}" id="portal_sale_content">
+                        <div t-call="GE11-TEAM6.repair_order_portal_content"/>
+                    </div>
+
+                    <!-- chatter -->
+                    <div id="repair_order_communication" class="mt-4">
+                        <h2>History</h2>
+                        <t t-call="portal.message_thread"/>
+                    </div>
+                </div>
+                
+            </div>
+        </xpath>
+    </template>
+
+    <template id="repair_order_portal_content" name="Repair Order Portal Content">
+        <!-- Intro -->
+        <div id="introduction" t-attf-class="pb-2 pt-3 #{'card-header bg-white' if report_type == 'html' else ''}">
+          <h2 class="my-0">
+                <em t-out="repair_order.name"/>
+            </h2>
+        </div>
+
+        <div t-attf-class="#{'card-body' if report_type == 'html' else ''}">
+            <!-- Informations -->
+            <div id="informations">
+                <div class="row" id="so_date">
+                    <div class="mb-3 col-6">
+                        <strong>Repair Order Date:</strong>
+                        <span t-field="repair_order.create_date" t-options='{"widget": "date"}'/>
+                    </div>
+                </div>
+                <div class="row" id="invoicing_shipping_address">
+                    <div class="col-lg-6">
+                        <strong class="d-block mb-1">
+                                Invoicing Address:
+                        </strong>
+                        <address t-field="repair_order.partner_invoice_id"
+                            t-options='{"widget": "contact", "fields": ["address"], "no_marker": True}'/>
+                    </div>
+                </div>
+            </div>
+
+            <section id="details" style="page-break-inside: auto;" class="mt32">
+                <h3 id="details">Repairs</h3>
+
+                <t t-set="display_discount" t-value="True in [line.discount > 0 for line in repair_order.sale_order_id.order_line]"/>
+
+                <div class="table-responsive">
+                    <table t-att-data-order-id="repair_order.id" t-att-data-token="repair_order.access_token" class="table table-sm" id="repair_order_table">
+                        <thead class="bg-100">
+                            <tr>
+                                <th class="text-start" id="product_name_header">Products</th>
+                                <th t-attf-class="text-end {{ 'd-none d-sm-table-cell' if report_type == 'html' else '' }}">
+                                    Amount
+                                </th>
+                                <th t-attf-class="text-end {{ 'd-none d-sm-table-cell' if report_type == 'html' else '' }}">
+                                    Scheduled Date
+                                </th>
+                                <th class="text-end" >
+                                    <span groups="account.group_show_line_subtotals_tax_excluded">Amount</span>
+                                    <span groups="account.group_show_line_subtotals_tax_included">Total Price</span>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="sale_tbody">
+                            <t t-set="current_subtotal" t-value="0"/>
+                            <!-- <t t-set="lines_to_report" t-value="repair_order.sale_order_id._get_order_lines_to_report()"/> -->
+                            
+                            <tr t-att-class="'bg-200 fw-bold o_line_section'">
+                                <td id="product_name">
+                                    <span t-field="repair_order.product_id"/>
+                                </td>
+                                <td class="text-end">
+                                    <div id="repair_qty">
+                                        <span t-field="repair_order.product_qty"/>
+                                    </div>
+                                </td>
+                                <td class="text-end">
+                                    <div id="repair_date">
+                                        <span t-field="repair_order.schedule_date"/>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <t t-set="current_subtotal" t-value="0"/>
+                            <t t-set="lines_to_report" t-value="repair_order.operations" />
+
+                            <t t-foreach="lines_to_report" t-as="line">
+                            
+                                <t t-set="current_subtotal" t-value="current_subtotal + line.price_subtotal" groups="account.group_show_line_subtotals_tax_excluded"/>
+                                <t t-set="current_subtotal" t-value="current_subtotal + line.price_total" groups="account.group_show_line_subtotals_tax_included"/>
+
+                                <tr t-att-class="'o_line_section'">
+                                    <td id="line_product_name">
+                                        <span t-field="line.product_id.name"/>
+                                    </td>
+                                    <td id="line_product_unit" class="text-end">
+                                        <div id="quote_qty">
+                                            <span t-field="line.product_uom_qty"/>
+                                            <span t-field="line.product_uom"/>
+                                        </div>
+                                    </td>
+                                    <td />
+                                </tr>
+
+                                <tr>
+                                    <td colspan="99">
+                                        <strong class="mr16">Subtotal</strong>
+                                        <span t-out="current_subtotal"
+                                            t-options='{"widget": "monetary", "display_currency": repair_order.pricelist_id.currency_id}'
+                                        />
+                                    </td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section t-if="repair_order.sale_order_id.signature" id="signature" name="Signature">
+                <div class="row mt-4" name="signature">
+                    <div t-attf-class="#{'col-3' if report_type != 'html' else 'col-sm-7 col-md-4'} ms-auto text-center">
+                        <h5>Signature</h5>
+                        <img t-att-src="image_data_uri(repair_order.sale_order_id.signature)" style="max-height: 6rem; max-width: 100%;"/>
+                        <p t-field="repair_order.sale_order_id.signed_by"/>
+                    </div>
+                </div>
+            </section>
+
+            <section t-if="not is_html_empty(repair_order.sale_order_id.note)" id="terms" class="mt-5">
+                <h3 class="">Terms &amp; Conditions</h3>
+                <hr class="mt-0 mb-1"/>
+                <t t-if="repair_order.sale_order_id.terms_type == 'html'">
+                    <!-- Note is plain text. This ensures a clickable link  -->
+                    <t t-set="tc_url" t-value="'%s/terms' % (repair_order.sale_order_id.get_base_url())"/>
+                    <em>Terms &amp; Conditions: <a href="/terms"><t t-out="tc_url"/></a></em>
+                </t>
+                <t t-else="">
+                    <em t-field="repair_order.sale_order_id.note"/>
+                </t>
+            </section>
+
+            <section t-if="repair_order.sale_order_id.payment_term_id" class="mt-5">
+                <h3 class="">Payment terms</h3>
+                <hr class="mt-0 mb-1"/>
+                <span t-field="repair_order.sale_order_id.payment_term_id"/>
+            </section>
+        </div>
+    </template>
+</odoo>
