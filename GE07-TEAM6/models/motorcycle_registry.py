@@ -19,7 +19,8 @@ class MotorcycleRegistry(models.Model):
 
     @api.depends('lot_ids')
     def _compute_lot_id(self):
-        if len(self.lot_ids) > 0:
-            self.lot_id = self.lot_ids[0]
-        else:
-            self.lot_id = False
+        for lot in self:
+            if len(lot.lot_ids) > 0:
+                lot.lot_id = self.lot_ids[0]
+            else:
+                lot.lot_id = False
