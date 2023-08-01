@@ -7,7 +7,6 @@ class MotorcycleRegistry(models.Model):
     repair_order_ids = fields.One2many(comodel_name="repair.order", string="Repair orders", inverse_name="registry_id")
     def action_report_repair_order(self):
         self.repair_order_ids
-        print('================= repair_order_ids===============',self.repair_order_ids)
         action = self.env["ir.actions.actions"]._for_xml_id("repair.action_repair_order_tree")
         action["domain"] = [('registry_id', '=' ,self.id)]
         return action
