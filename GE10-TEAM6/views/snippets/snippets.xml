@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="mileage" inherit_id="website.snippets" name="mileage count">
+        <xpath expr="//t[@id='mail_group_hook']" position="before">
+            <t t-snippet="GE10-TEAM6.s_mileage"
+               string="Mileage Count"
+               t-thumbnail="/website/static/src/img/snippets_thumbs/s_searchbar.svg"/>
+        </xpath>
+    </template>
+</odoo>
