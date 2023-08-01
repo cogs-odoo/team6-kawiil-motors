@@ -1,7 +1,7 @@
 from odoo import models, Command
 
 class StockPicking(models.Model):
-    _inherit = "stock.picking"
+    _inherit = 'stock.picking'
 
     def _action_done(self):
         res = super()._action_done()
