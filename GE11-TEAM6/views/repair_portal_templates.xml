@@ -12,19 +12,6 @@
         </xpath>
     </template>
 
-      <!-- <li t-if="page_name == 'rfq' or order and order.state == 'sent'" t-attf-class="breadcrumb-item #{'active ' if not order else ''}">
-        <a t-if="order" t-attf-href="/my/rfq?{{ keep_query() }}">Requests for Quotation</a>
-        <t t-else="">Requests for Quotation</t>
-      </li>
-      <li t-if="page_name == 'purchase' or order and order.state != 'sent'" t-attf-class="breadcrumb-item #{'active ' if not order else ''}">
-        <a t-if="order" t-attf-href="/my/purchase?{{ keep_query() }}">Purchase Orders</a>
-        <t t-else="">Purchase Orders</t>
-      </li>
-      <li t-if="order" class="breadcrumb-item active">
-        <t t-esc="order.name"/>
-      </li> -->
-      
-
     <template id="portal_my_home_repairs" name="Show Repair Orders" customize_show="True" inherit_id="portal.portal_my_home" priority="20">
         <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
             <t t-call="portal.portal_docs_entry">
@@ -42,6 +29,15 @@
             <t t-call="portal.portal_searchbar">
                 <t t-set="title">Repair Orders</t>
             </t>
+
+            <div class="m-3 text-center">
+                <form t-attf-action="/my/repairs/new" id="new_repair" method="GET" class="modal-content">
+                    <button type="submit">
+                        <t>New repair</t>
+                    </button>
+                </form>
+            </div>
+            
             <t t-if="repairs" t-call="portal.portal_table">
                 <thead>
                     <tr class="active">
@@ -75,13 +71,10 @@
             <p t-else="">There are currently no repairs for your account.</p>
         </t>
     </template>
+    
 
     <template id="repair_order_portal_template" name="Repair Order Portal Template" inherit_id="portal.portal_sidebar" primary="True">
         <xpath expr="//div[hasclass('o_portal_sidebar')]" position="inside">
-            <!-- <t t-set="o_portal_fullwidth_alert" groups="sales_team.group_sale_salesman">
-                 Uses backend_url provided in rendering values
-                <t t-call="portal.portal_back_in_edit_mode"/>
-            </t> -->
 
             <div class="row mt16 o_portal_sale_sidebar">
                 <!-- Sidebar -->
@@ -107,30 +100,6 @@
                             <li class="navspy list-group-item ps-0 flex-grow-1" t-ignore="true" role="complementary">
                                 <ul class="nav flex-column bs-sidenav"></ul>
                             </li>
-
-                            <!-- <t t-if="not sale_order.is_expired and sale_order.state in ['draft', 'sent']">
-                                <li t-if="sale_order.validity_date" class="list-group-item">
-                                    <small><b class="text-muted">This offer expires on</b></small>
-                                    <div t-field="sale_order.validity_date"></div>
-                                </li>
-                                <li t-if="sale_order.amount_undiscounted - sale_order.amount_untaxed &gt; 0.01" class="list-group-item flex-grow-1">
-                                    <small><b class="text-muted">Your advantage</b></small>
-                                    <small>
-                                        <b t-field="sale_order.amount_undiscounted"
-                                            t-options='{"widget": "monetary", "display_currency": sale_order.pricelist_id.currency_id}'
-                                            style="text-decoration: line-through"
-                                            class="d-block mt-1"
-                                            data-id="amount_undiscounted" />
-                                    </small>
-                                    <t t-if="sale_order.amount_untaxed == sale_order.amount_total">
-                                        <h4 t-field="sale_order.amount_total" class="text-success" data-id="total_amount"/>
-                                    </t>
-                                    <t t-else="">
-                                        <h4 t-field="sale_order.amount_untaxed" class="text-success mb-0" data-id="total_untaxed"/>
-                                        <small>(<span t-field="sale_order.amount_total" data-id="total_amount"/> Incl. tax)</small>
-                                    </t>
-                                </li>
-                            </t> -->
 
                             <li t-if="repair_order.user_id" class="list-group-item flex-grow-1">
                                 <div class="small mb-1">
@@ -192,9 +161,6 @@
                         <t t-if="message == 'sign_ok' and repair_order.state in ['confirmed', 'done']">
                             Your repair has been confirmed.
                         </t>
-                        <!-- <t t-elif="message == 'sign_ok' and repair._has_to_be_paid()">
-                            Your order has been signed but still needs to be paid to be confirmed.
-                        </t> -->
                         <t t-else="">Your repair has been signed.</t>
                     </div>
 
@@ -222,6 +188,39 @@
                 
             </div>
         </xpath>
+    </template>
+
+    <template id="repair_order_portal_new" name="Repair Order Portal New">
+        <div role="dialog" class="modal fade" id="modaledit">   
+            <div class="modal-dialog">
+                <form t-attf-action="/my/repairs/create_new" id="new_repair" method="POST" class="modal-content">
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                    <header class="modal-header">
+                        <h4 class="modal-title">
+                            <span> Create new repair </span>
+                        </h4>
+                        <a class="btn btn-primary" href="/my/repairs">Go Back</a>
+                    </header>
+                    <main class="modal-body" id="edit-dialog">
+                        <div class="row g-3 needs-validation">
+                            <div class="col-md-4">
+                                <label class="form-label">VIN</label>
+                                <input name="input_vin" type="text" class="form-control" id="input_vin"/>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="quantity_input" class="form-label">Quantity</label>
+                                <input name="input_qty" type="number" class="form-control" id="quantity_input"/>
+                            </div>
+                        </div>
+                    </main>
+                    <footer class="modal-footer">
+                        <button type="submit" class="btn btn-danger">
+                            Done
+                        </button>
+                    </footer>
+                </form>
+            </div>
+        </div>
     </template>
 
     <template id="repair_order_portal_content" name="Repair Order Portal Content">

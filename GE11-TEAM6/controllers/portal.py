@@ -5,6 +5,23 @@ from odoo.exceptions import AccessError, MissingError, ValidationError
 from odoo.http import request
 
 class CustomerPortal(portal.CustomerPortal):
+
+    @http.route(['/my/repairs/new'], type='http', auth='user', methods=['GET'], website=True)
+    def portal_new_repair_page (self, **kwargs):
+        return request.render("GE11-TEAM6.repair_order_portal_new")
+
+    @http.route(['/my/repairs/create_new'], type='http', auth='user', methods=['POST'], website=True)
+    def portal_new_repair (self, access_token=None, **kwargs):
+
+        vin = kwargs['input_vin']
+        qty = kwargs['input_qty']
+
+        RepairOrder = request.env['repair.order'].create({
+            'vin': vin,
+            'product_uom': qty
+        })
+
+        return self.portal_my_orders ()
     
     @http.route(['/my/repairs', '/my/repairs/page/<int:page>'], type='http', auth="user", website=True)
     def portal_my_orders(self, **kwargs):
