@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ge09_motorcycle_registry_view_form_inherit" model="ir.ui.view">
+            <field name="name">ge09.motorcycle.registry.view.form.inherit</field>
+            <field name="model">motorcycle.registry</field>
+            <field name="inherit_id" ref="motorcycle_registry.motorcycle_registry_view_form"/>
+            <field name="arch" type="xml">
+                <field name="picture" position="before">
+                    <field name="count_orders" invisible = '1'/>
+                    <field name="owner_id" invisible = '1'/>
+
+                    <div class="oe_button_box" name="button_box">
+                            <button type="object"
+                                name="action_report_repair_order"
+                                class="oe_stat_button"
+                                icon = "fa-gear"
+                                string = "Repair orders"
+                                attrs = "{'invisible': [('count_orders', '=', 0.0)]}"
+                                domain = "[('owner_id', '=', owner_id)]">
+
+                                <field name="repair_order_ids" widget="statinfo"/>
+                            </button>
+                    </div>
+                </field>
+            </field>
+        </record>
+    </data>
+</odoo>
+
+
+<!-- repair.view_repair_order_form_filter -->
