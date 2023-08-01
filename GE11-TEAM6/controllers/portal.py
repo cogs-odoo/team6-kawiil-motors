@@ -4,6 +4,8 @@ from odoo.addons.portal.controllers.portal import pager as portal_pager
 from odoo.exceptions import AccessError, MissingError, ValidationError
 from odoo.http import request
 
+from odoo.osv.expression import OR
+
 class CustomerPortal(portal.CustomerPortal):
     
     @http.route(['/my/repairs', '/my/repairs/page/<int:page>'], type='http', auth="user", website=True)
@@ -13,7 +15,7 @@ class CustomerPortal(portal.CustomerPortal):
         return request.render("GE11-TEAM6.portal_my_repairs", values)
     
     @http.route(['/my/repairs/<int:repair_id>'], type='http', auth="public", website=True)
-    def portal_order_page(self, repair_id, report_type=None, access_token=None, message=False, download=False, **kw):
+    def portal_order_page(self, repair_id, report_type=None, access_token=None, sortby=None, search_in="all", search=None, message=False, download=False, **kw):
         try:
             repair_sudo = self._document_check_access('repair.order', repair_id, access_token=access_token)
         except (AccessError, MissingError):
@@ -63,9 +65,23 @@ class CustomerPortal(portal.CustomerPortal):
                 if RepairOrder.check_access_rights('read', raise_exception=False) else 0
 
         return values
+    
+    def _get_repair_searchbar_inputs(self):
+        return {
+            'all': {'input': 'all', 'label': ('Search in All')},
+            'ticket': {'input': 'ticket', 'label': ('Search in Ticket')},
+            'vin': {'input': 'vin', 'label': ('Search in VIN')},
+        }
+    
+    def _get_search_domain(self, search_in, search):
+        search_domain = []
+        if search_in in ('ticket', 'all'):
+            search_domain = OR([search_domain, [('name', 'ilike', search)]])
+        if search_in in ('vin', 'all'):
+            search_domain = OR([search_domain, [('vin', 'ilike', search)]])
+        return search_domain
 
-    def _prepare_repair_portal_rendering_values (
-            self, page = 1, date_begin = None, date_end = None, sortby = None, repair_page = False, **kwargs):
+    def _prepare_repair_portal_rendering_values (self, page = 1, date_begin = None, sortby = None, search_in="all", search=None, repair_page = False, **kwargs):
         
         RepairOrder = request.env['repair.order']
         
@@ -77,22 +93,24 @@ class CustomerPortal(portal.CustomerPortal):
 
         domain = self._prepare_repairs_domain(partner)
 
-        searchbar_sortings = self._get_repair_searchbar_sortings ()
-        sort_order = searchbar_sortings[sortby]['order']
+        searchbar_inputs = self._get_repair_searchbar_inputs()
+
+        #searchbar_sortings = self._get_repair_searchbar_sortings ()
+        #sort_order = searchbar_sortings[sortby]['order']
         url = "/my/repairs"
 
-        if date_begin and date_end:
-            domain += [('create_date', '>', date_begin), ('create_date', '<=', date_end)]
+        if search and search_in:
+            domain += self._get_search_domain(search_in, search)
 
         pager_values = portal_pager (
             url = url,
             total = RepairOrder.search_count(domain),
             page = page,
             step = self._items_per_page,
-            url_args = {'date_begin': date_begin, 'date_end': date_end, 'sortby': sortby},
+            url_args={'search_in': search_in, 'search': search},
         )
 
-        repairs = RepairOrder.search(domain, order=sort_order, limit = self._items_per_page, offset = pager_values ['offset'])
+        repairs = RepairOrder.search(domain, limit = self._items_per_page, offset = pager_values ['offset'])
 
         values.update ({
             'date': date_begin,
@@ -100,18 +118,21 @@ class CustomerPortal(portal.CustomerPortal):
             'page_name': 'repair',
             'pager': pager_values,
             'default_url': url,
-            'searchbar_sortings': searchbar_sortings,
+            'searchbar_sortings': None,
+            'search_in': search_in,
+            'search': search,
             'sortby': sortby,
+            'searchbar_inputs': searchbar_inputs,
         })
 
         return values
 
-    def _get_repair_searchbar_sortings(self):
-        return {
-            'date': {'label': ('Order Date'), 'order': 'create_date desc'},
-            'name': {'label': ('Reference'), 'order': 'name'},
-            'stage': {'label': ('Stage'), 'order': 'state'},
-        }
+    # def _get_repair_searchbar_sortings(self):
+    #     return {
+    #         'date': {'label': ('Order Date'), 'order': 'create_date desc'},
+    #         'name': {'label': ('Ticket'), 'order': 'name'},
+    #         'vin': {'label': ('VIN'), 'order': 'state'},
+    #     }
     
     def _prepare_repairs_domain(self, partner):
         return [
